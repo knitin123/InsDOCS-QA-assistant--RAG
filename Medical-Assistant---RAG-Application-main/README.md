@@ -136,7 +136,7 @@ POST /ask/ --- Ask a question --- Form field: `question`
 
 ```bash
 # Clone the repo
-$ git clone https://github.com/sabhavathyashwanth/Medical-Assistant---RAG-Application.git
+$ git clone https://github.com/knitin123/InsDocs-QA-assistant--RAG/Medical-Assistant---RAG-Application.git
 $ cd Medical-Assistant---RAG-Application/server
 
 # Create virtual env
