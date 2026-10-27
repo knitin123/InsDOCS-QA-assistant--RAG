@@ -12,7 +12,7 @@ app=FastAPI(title="Medical Assistant API",description="API for AI Medical Assist
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"]
 )
@@ -21,6 +21,11 @@ app.add_middleware(
 
 # middleware exception handlers
 app.middleware("http")(catch_exception_middleware)
+
+# health check (used by Render and CI)
+@app.get("/health")
+def health():
+    return {"status":"ok"}
 
 # routers
 

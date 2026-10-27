@@ -2,3 +2,4 @@
 /server/.env
 __pycache__
 test.py
+.pytest_cache

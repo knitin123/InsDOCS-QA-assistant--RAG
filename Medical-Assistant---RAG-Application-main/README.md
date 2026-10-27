@@ -1,5 +1,7 @@
 # 📅 AI Medical Assistant Chatbot — RAG-based Application
 
+[![CI](https://github.com/knitin123/InsDocs-QA-assistant--RAG/actions/workflows/ci.yml/badge.svg)](https://github.com/knitin123/InsDocs-QA-assistant--RAG/actions/workflows/ci.yml)
+
 ## 🧠 Project Overview
 
 This application is a **Medical Domain Chatbot** built using **Retrieval-Augmented Generation (RAG)**. It allows users to upload their own medical documents (e.g., textbooks, reports), and the system intelligently answers queries by retrieving the most relevant content before generating a final response.
@@ -34,9 +36,9 @@ For a detailed view, refer to the **[MedicalAssistant.pdf](./assets/MedicalAssis
 
 - Upload medical PDFs (notes, books, etc.)
 - Auto-extracts text and splits into semantic chunks
-- Embeds using Google/BGE embeddings
+- Embeds using Google `gemini-embedding-001` (768 dims)
 - Stores vectors in **Pinecone DB**
-- Uses **Groq's LLaMA3-70B** via LangChain
+- Uses **Groq's Llama 3.3 70B** via LangChain
 - FastAPI backend with endpoints for file upload and Q\&A
 
 ---
@@ -45,8 +47,8 @@ For a detailed view, refer to the **[MedicalAssistant.pdf](./assets/MedicalAssis
 
 | Component  | Tech Used                  |
 | ---------- | -------------------------- |
-| LLM        | Groq API (LLaMA3-70B)      |
-| Embeddings | Google Generative AI / BGE |
+| LLM        | Groq API (Llama 3.3 70B)   |
+| Embeddings | Google Generative AI       |
 | Vector DB  | Pinecone                   |
 | Framework  | LangChain                  |
 | Backend    | FastAPI                    |
@@ -60,6 +62,8 @@ For a detailed view, refer to the **[MedicalAssistant.pdf](./assets/MedicalAssis
 POST /upload_pdfs/ --- Upload one or more PDF files
 
 POST /ask/ --- Ask a question --- Form field: `question`
+
+GET /health --- Health check
 
 ```
 
@@ -167,6 +171,28 @@ $ uv pip install -r requirements.txt
 # Run the server
 $ streamlit run app.py
 ```
+
+Optional environment variables: `PINECONE_INDEX_NAME` (default `insightdocs`), `GROQ_MODEL` (default `llama-3.3-70b-versatile`), `EMBED_MODEL` (default `models/gemini-embedding-001`).
+
+---
+
+## 🧪 Testing & CI
+
+The pytest suite runs the full pipeline (PDF chunking → embedding → Pinecone upsert → retrieval → LLM answer → FastAPI endpoints) against in-memory fakes, so it needs no API keys:
+
+```bash
+$ cd server
+$ pip install -r requirements-dev.txt
+$ pytest -v
+```
+
+A live smoke test uploads `assets/DIABETES.pdf` to real Pinecone and asks Groq about it:
+
+```bash
+$ pytest -m integration   # needs GOOGLE_API_KEY, PINECONE_API_KEY, GROQ_API_KEY
+```
+
+GitHub Actions ([.github/workflows/ci.yml](../.github/workflows/ci.yml)) runs the offline suite on every push and pull request, then the live smoke test on pushes to `main` using the repository secrets `GOOGLE_API_KEY`, `PINECONE_API_KEY` and `GROQ_API_KEY` (it skips if they aren't set).
 
 ---
 

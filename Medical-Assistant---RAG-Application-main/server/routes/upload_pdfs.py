@@ -8,12 +8,12 @@ from logger import logger
 router=APIRouter()
 
 @router.post("/upload_pdfs/")
-async def upload_pdfs(files:List[UploadFile] = File(...)):
+def upload_pdfs(files:List[UploadFile] = File(...)):
     try:
         logger.info("Recieved uploaded files")
-        load_vectorstore(files)
+        chunk_count=load_vectorstore(files)
         logger.info("Document added to vectorstore")
-        return {"messages":"Files processed and vectorstore updated"}
+        return {"messages":"Files processed and vectorstore updated","chunks":chunk_count}
     except Exception as e:
         logger.exception("Error during PDF upload")
         return JSONResponse(status_code=500,content={"error":str(e)})
