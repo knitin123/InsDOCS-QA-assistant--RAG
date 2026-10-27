@@ -1,3 +1,4 @@
 -r requirements.txt
 pytest
 httpx  # required by fastapi.testclient
+numpy  # required by the fake embeddings used in tests
