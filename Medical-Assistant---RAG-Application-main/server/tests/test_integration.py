@@ -15,7 +15,8 @@ REQUIRED_KEYS = ("GOOGLE_API_KEY", "PINECONE_API_KEY", "GROQ_API_KEY")
 pytestmark = [
     pytest.mark.integration,
     pytest.mark.skipif(
-        any(os.getenv(k, "test-key") == "test-key" for k in REQUIRED_KEYS),
+        # unset GitHub secrets arrive as empty strings; conftest fills in "test-key" otherwise
+        any(os.getenv(k, "") in ("", "test-key") for k in REQUIRED_KEYS),
         reason="needs real GOOGLE_API_KEY, PINECONE_API_KEY and GROQ_API_KEY",
     ),
 ]
